@@ -8,5 +8,4 @@ chrome.browserAction.onClicked.addListener(dragSelect);
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   chrome.downloads.download({url: request.url});
-  sendResponse({result: "ok"});
 });

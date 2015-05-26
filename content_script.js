@@ -37,17 +37,14 @@ container.on('mousedown', function(e) {
           'top': new_y,
           'left': new_x
         });
-    }).on('mouseup', function(e) {
+    }).one("mouseup", function(e) {
+	container.off("mousemove");
+    	selection.remove();
         var list = get_elements(click_x, click_y, e.pageX, e.pageY);
-        /*for(var i = 0; i < list.length; i++) {
-          console.log(list[i]);
-          chrome.downloads.download({url: list[i]});
-        }*/
-        chrome.runtime.sendMessage({url: "http://cseweb.ucsd.edu/~ricko/CSE8B/Syllabus.html"}, function(response) {console.log(response.result)});
-        
-        container.off('mousemove');
-        selection.remove();
-    });
+        for(var i = 0; i < list.length; i++) {
+          chrome.runtime.sendMessage({url: list[i]}, function(response) {});
+	}    
+   });
 });
 
 function get_elements(x1, y1, x2, y2) {
