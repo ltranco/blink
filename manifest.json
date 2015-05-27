@@ -3,12 +3,21 @@
 
   "name": "Blink",
 
-  "description": "Draw a rectangular selection to download all links within the area.",
+  "description": "When turned on, Blink downloads all links within the selection area.",
 
   "version": "1.0",
 
   "browser_action": {
     "default_icon": "icon19-off.png"
+  },
+
+  "icons": {
+    "16": "icon-16.png",
+    "24": "icon-24.png",
+    "32": "icon-32.png",
+    "48": "icon-48.png",
+    "64": "icon-64.png",
+    "128": "icon-128.png"
   },
 
   "background": {
@@ -19,7 +28,7 @@
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*"],
-      "js": ["jquery-1.11.3.min.js", "content_script.js", "reset.js"]
+      "js": ["jquery-1.11.3.min.js", "content_script.js"]
     }
   ],
   
