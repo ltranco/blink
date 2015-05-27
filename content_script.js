@@ -41,9 +41,16 @@ container.on('mousedown', function(e) {
 	container.off("mousemove");
     	selection.remove();
         var list = get_elements(click_x, click_y, e.pageX, e.pageY);
+        list = list.concat(get_elements(e.pageX, e.pageY, click_x, click_y));
+        var dict = {};
         for(var i = 0; i < list.length; i++) {
-          chrome.runtime.sendMessage({url: list[i]}, function(response) {});
-	}    
+          if(!(list[i] in dict)) {
+            dict[list[i]] = 0;
+          }
+        }
+        for(key in dict) {
+          chrome.runtime.sendMessage({url: key}, function(response) {});
+        }    
    });
 });
 
