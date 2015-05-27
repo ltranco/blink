@@ -1,16 +1,19 @@
 var container = $("body");
 var selection = $('<div>').addClass('selectionBox');
-var mouseClick = false;
+var mouseDown = false;
 
-container.css({
-    "user-select": "none"
-});
+//Hide default select
+container.css("user-select", "none");
 
 container.on('mousedown', function(e) {
-    mouseClick = true;
+    //Register mouseDown event
+    mouseDown = true;
+
+    //Record first click coordinates
     var click_y = e.pageY;
     var click_x = e.pageX;
 
+    //Adding the rectangle selection
     selection.css({  
       'top':    click_y,
       'left':   click_x,
@@ -23,39 +26,55 @@ container.on('mousedown', function(e) {
     });
     selection.appendTo(container);
 
+    //Distinguish between a click and a drag event. 
+    //If mouseup is fired, then it is a click, else a drag.
+    container.on("mouseup", function(e) {
+      mouseDown = false;
+    });
+
+    //On mousemove event
     container.on('mousemove', function(e) {
-      mouseClick = false;
-      var move_x = e.pageX,
-          move_y = e.pageY,
-          width  = Math.abs(move_x - click_x),
-          height = Math.abs(move_y - click_y),
-          new_x, new_y;
+      //Only expand the rectangle on a drag event
+      if(mouseDown) {
+        //Record current mouse's coordinates and calculate offsets
+        var move_x = e.pageX,
+            move_y = e.pageY,
+            width  = Math.abs(move_x - click_x),
+            height = Math.abs(move_y - click_y),
+            new_x, new_y;
 
-      new_x = (move_x < click_x) ? (click_x - width) : click_x;
-      new_y = (move_y < click_y) ? (click_y - height) : click_y;
+        new_x = (move_x < click_x) ? (click_x - width) : click_x;
+        new_y = (move_y < click_y) ? (click_y - height) : click_y;
 
-      selection.css({
-        'width': width,
-        'height': height,
-        'top': new_y,
-        'left': new_x
-      });
+        //Expand the rectangle selection
+        selection.css({
+          'width': width,
+          'height': height,
+          'top': new_y,
+          'left': new_x
+        });
+      }
     }).one("mouseup", function(e) {
-        if(!mouseClick) {
-          container.off("mousemove");
-          selection.remove();
-          var list = get_elements(click_x, click_y, e.pageX, e.pageY);
-          list = list.concat(get_elements(e.pageX, e.pageY, click_x, click_y));
-          var dict = {};
-          for(var i = 0; i < list.length; i++) {
-            if(!(list[i] in dict)) {
-              dict[list[i]] = 0;
-            }
-          }
-          for(key in dict) {
-            chrome.runtime.sendMessage({url: key}, function(response) {});
-          }
-        }    
+      //On a mouseup event after a drag, remove the rectangle selection
+      container.off("mousemove");
+      selection.remove();
+
+      //Grab all elements in bound
+      var list = get_elements(click_x, click_y, e.pageX, e.pageY);
+      list = list.concat(get_elements(e.pageX, e.pageY, click_x, click_y));
+      
+      //Make sure all URLs are unique
+      var dict = {};
+      for(var i = 0; i < list.length; i++) {
+        if(!(list[i] in dict)) {
+          dict[list[i]] = 0;
+        }
+      }
+
+      //Download all URLs
+      for(key in dict) {
+        chrome.runtime.sendMessage({url: key}, function(response) {});
+      }
    });
 });
 
@@ -71,27 +90,17 @@ function get_elements(x1, y1, x2, y2) {
             var element_x2 = offset.left + $(this).width();
             var element_y2 = offset.top + $(this).height();
 
-            if(
-                (
-                    ((x1 >= element_x1 && x1 <= element_x2) && (y1 >= element_y1 && y1 <= element_y2)) ||
-                    ((x2 >= element_x1 && x2 <= element_x2) && (y1 >= element_y1 && y1 <= element_y2)) ||
-                    ((x2 >= element_x1 && x2 <= element_x2) && (y2 >= element_y1 && y2 <= element_y2)) ||
-                    ((x1 >= element_x1 && x1 <= element_x2) && (y2 >= element_y1 && y2 <= element_y2))
-                ) ||
-                (
-                    ((element_x1 >= x1 && element_x1 <= x2) && (element_y1 >= y1 && element_y1 <= y2)) ||
-                    ((element_x2 >= x1 && element_x2 <= x2) && (element_y1 >= y1 && element_y1 <= y2)) ||
-                    ((element_x2 >= x1 && element_x2 <= x2) && (element_y2 >= y1 && element_y2 <= y2)) ||
-                    ((element_x1 >= x1 && element_x1 <= x2) && (element_y2 >= y1 && element_y2 <= y2))
-                )
-            )
-
-            {
-
-                element_list.push(this.href);
+            if(((x1 >= element_x1 && x1 <= element_x2 && y1 >= element_y1 && y1 <= element_y2) ||
+                (x2 >= element_x1 && x2 <= element_x2 && y1 >= element_y1 && y1 <= element_y2) ||
+                (x2 >= element_x1 && x2 <= element_x2 && y2 >= element_y1 && y2 <= element_y2) ||
+                (x1 >= element_x1 && x1 <= element_x2 && y2 >= element_y1 && y2 <= element_y2)) ||
+                ((element_x1 >= x1 && element_x1 <= x2) && (element_y1 >= y1 && element_y1 <= y2) ||
+                (element_x2 >= x1 && element_x2 <= x2) && (element_y1 >= y1 && element_y1 <= y2) ||
+                (element_x2 >= x1 && element_x2 <= x2) && (element_y2 >= y1 && element_y2 <= y2) ||
+                (element_x1 >= x1 && element_x1 <= x2) && (element_y2 >= y1 && element_y2 <= y2))) {
+                  element_list.push(this.href);
             }
         }
     });
-
     return element_list;
 }
