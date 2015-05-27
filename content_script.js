@@ -5,7 +5,7 @@ var selected = false;
 
 chrome.runtime.sendMessage({cmd: "getStatus"}, function(response) {
   if(response) {
-    //container.css("background-color", "green");
+    container.css("background-color", "white");
     //Hide default select
     container.css("user-select", "none");
 
@@ -86,6 +86,13 @@ chrome.runtime.sendMessage({cmd: "getStatus"}, function(response) {
           }
         });
     });
+  }
+  else {
+	container.css("background-color", "green");
+	container.css("user-select", "auto");
+	container.unbind("mousedown");
+	container.unbind("mousemove");
+	container.unbind("mouseup");	
   }
 });
 

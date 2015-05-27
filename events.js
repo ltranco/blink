@@ -6,12 +6,12 @@ chrome.browserAction.onClicked.addListener(function (tab) {
 	if(toggle) {
 		chrome.browserAction.setIcon({path: "icon19.png", tabId: tab.id});
 		on = true;
-		chrome.tabs.executeScript(tab.id, {file: "content_script.js"});
 	}
 	else {
 		chrome.browserAction.setIcon({path: "icon19-off.png", tabId: tab.id});
 		on = false;
 	}
+	chrome.tabs.executeScript(tab.id, {file: "content_script.js"});
 });
 
 
