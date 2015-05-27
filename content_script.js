@@ -1,11 +1,13 @@
 var container = $("body");
 var selection = $('<div>').addClass('selectionBox');
+var mouseClick = false;
 
 container.css({
     "user-select": "none"
 });
 
 container.on('mousedown', function(e) {
+    mouseClick = true;
     var click_y = e.pageY;
     var click_x = e.pageX;
 
@@ -22,34 +24,37 @@ container.on('mousedown', function(e) {
     selection.appendTo(container);
 
     container.on('mousemove', function(e) {
-        var move_x = e.pageX,
-            move_y = e.pageY,
-            width  = Math.abs(move_x - click_x),
-            height = Math.abs(move_y - click_y),
-            new_x, new_y;
+      mouseClick = false;
+      var move_x = e.pageX,
+          move_y = e.pageY,
+          width  = Math.abs(move_x - click_x),
+          height = Math.abs(move_y - click_y),
+          new_x, new_y;
 
-        new_x = (move_x < click_x) ? (click_x - width) : click_x;
-        new_y = (move_y < click_y) ? (click_y - height) : click_y;
+      new_x = (move_x < click_x) ? (click_x - width) : click_x;
+      new_y = (move_y < click_y) ? (click_y - height) : click_y;
 
-        selection.css({
-          'width': width,
-          'height': height,
-          'top': new_y,
-          'left': new_x
-        });
+      selection.css({
+        'width': width,
+        'height': height,
+        'top': new_y,
+        'left': new_x
+      });
     }).one("mouseup", function(e) {
-	container.off("mousemove");
-    	selection.remove();
-        var list = get_elements(click_x, click_y, e.pageX, e.pageY);
-        list = list.concat(get_elements(e.pageX, e.pageY, click_x, click_y));
-        var dict = {};
-        for(var i = 0; i < list.length; i++) {
-          if(!(list[i] in dict)) {
-            dict[list[i]] = 0;
+        if(!mouseClick) {
+          container.off("mousemove");
+          selection.remove();
+          var list = get_elements(click_x, click_y, e.pageX, e.pageY);
+          list = list.concat(get_elements(e.pageX, e.pageY, click_x, click_y));
+          var dict = {};
+          for(var i = 0; i < list.length; i++) {
+            if(!(list[i] in dict)) {
+              dict[list[i]] = 0;
+            }
           }
-        }
-        for(key in dict) {
-          chrome.runtime.sendMessage({url: key}, function(response) {});
+          for(key in dict) {
+            chrome.runtime.sendMessage({url: key}, function(response) {});
+          }
         }    
    });
 });
