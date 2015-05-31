@@ -3,12 +3,13 @@
 
   "name": "Blink",
 
-  "description": "When turned on, Blink downloads all links within the selection area.",
+  "description": "When turned on, Blink downloads all links within the selection area. In a blink.",
 
   "version": "1.0",
 
   "browser_action": {
-    "default_icon": "icon19-off.png"
+    "default_icon": "icon19-off.png",
+    "default_title": "Blink is off."
   },
 
   "icons": {
@@ -33,7 +34,9 @@
   ],
   
   "permissions": [
-    "activeTab",
+    "tabs",
+    "http://*/",
+    "https://*/",
     "downloads"
   ]
 }

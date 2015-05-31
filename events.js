@@ -1,45 +1,36 @@
 var toggle = false;
 var on = false;
 
-chrome.browserAction.onClicked.addListener(function (tab) {
+chrome.browserAction.onClicked.addListener(function(t) {
 	toggle = !toggle;
 	if(toggle) {
-		chrome.browserAction.setIcon({path: "icon19.png", tabId: tab.id});
+		chrome.browserAction.setIcon({path: "icon19.png"});
+		chrome.browserAction.setTitle({title: "Blink is on."});
 		on = true;
 	}
 	else {
-		chrome.browserAction.setIcon({path: "icon19-off.png", tabId: tab.id});
+		chrome.browserAction.setIcon({path: "icon19-off.png"});
+		chrome.browserAction.setTitle({title: "Blink is off."});
 		on = false;
 	}
-	chrome.tabs.executeScript(tab.id, {file: "content_script.js"});
+	chrome.tabs.query({}, function(tabs) {
+		for(var i = 0; i < tabs.length; i++) {
+			if(tabs[i].url.indexOf("chrome://") == -1)	{
+				chrome.tabs.executeScript(tabs[i].id, {file: "content_script.js"});		
+			}
+		}
+	});
 });
 
+chrome.tabs.onCreated.addListener(function(tab) {
+	if(tab.url.indexOf("chrome://") == -1)
+		chrome.tabs.executeScript(tab.id, {file: "content_script.js"});
+});
 
-
-
-
-
-/*
-
-
-
-var active = true;
-
-function dragSelect() {
-	if(active) {
-		console.log("now on");
-		active = true;
-	    chrome.tabs.getSelected(null, function(tab) {
-	      chrome.tabs.executeScript(null, {file: "content_script.js"});
-	    });	
-	}
-	else {
-		console.log("now off");
-		active = false;
-	}
-}
-
-chrome.browserAction.onClicked.addListener(dragSelect);*/
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+	if(tab.url.indexOf("chrome://") == -1)
+		chrome.tabs.executeScript(tab.id, {file: "content_script.js"});
+});
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	if(request.cmd == "getStatus") {
