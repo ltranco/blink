@@ -22,6 +22,7 @@ chrome.browserAction.onClicked.addListener(function(t) {
 	});
 });
 
+/*
 chrome.tabs.onCreated.addListener(function(tab) {
 	if(tab.url.indexOf("chrome://") == -1)
 		chrome.tabs.executeScript(tab.id, {file: "content_script.js"});
@@ -30,7 +31,7 @@ chrome.tabs.onCreated.addListener(function(tab) {
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 	if(tab.url.indexOf("chrome://") == -1)
 		chrome.tabs.executeScript(tab.id, {file: "content_script.js"});
-});
+});*/
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	if(request.cmd == "getStatus") {
