@@ -3,7 +3,7 @@
 
   "name": "Blink",
 
-  "description": "When turned on, Blink downloads all links within the selection area. In a blink.",
+  "description": "Downloads all links within a selection area.",
 
   "version": "1.0",
 
