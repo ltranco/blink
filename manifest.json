@@ -22,7 +22,7 @@
   },
 
   "background": {
-    "scripts": ["jquery-1.11.3.min.js", "events.js"],
+    "scripts": ["events.js"],
     "persistent": false
   },
 
