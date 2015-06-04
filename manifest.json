@@ -23,7 +23,7 @@
 
   "background": {
     "scripts": ["events.js"],
-    "persistent": false
+    "persistent": true
   },
 
   "content_scripts": [

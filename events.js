@@ -7,15 +7,30 @@ chrome.windows.onCreated.addListener(function() {
 	toggle = false;
 	on = false;
 	console.log("create. on is " + on);
-	chrome.tabs.query({}, function(tabs) {
+	
+	/*chrome.tabs.query({}, function(tabs) {
 		for(var i = 0; i < tabs.length; i++) {
 			if(tabs[i].url.indexOf("chrome://") == -1)	{
-				console.log("here4");
+				console.log("running script at tab " + tabs[i].tabId);
 				chrome.tabs.executeScript(tabs[i].id, {file: "content_script.js"});		
 			}
 		}
-	});
+	});*/
 })
+
+
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+	console.log("tab updated event fired on tab " + tab.url + "status: " + changeInfo.status);
+    
+});
+
+chrome.runtime.onSuspend.addListener(function() {
+	alert("unloading");
+});
+/*
+chrome.tabs.onCreated.addListener(function(tab) {         
+   chrome.tabs.executeScript({file: "content_script.js"});	
+});*/
 
 chrome.browserAction.onClicked.addListener(function(t) {
 	toggle = !toggle;
