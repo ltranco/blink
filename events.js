@@ -7,7 +7,6 @@ chrome.runtime.onStartup.addListener(function() {
 		on = false;
 		toggle = false;
 		executeContentScript();
-
 	});
 	chrome.browserAction.setTitle({title: "Blink is on."});	
 });
