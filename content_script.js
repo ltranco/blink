@@ -9,6 +9,8 @@ chrome.runtime.sendMessage({cmd: "getStatus"}, function(response) {
     container.css("user-select", "none");
 
     container.on('mousedown', function(e) {
+      //Only care about left click
+      if(e.which == 1) {
         //Register mouseDown event
         mouseDown = true;
         selected = false;
@@ -34,7 +36,7 @@ chrome.runtime.sendMessage({cmd: "getStatus"}, function(response) {
         //If mouseup is fired, then it is a click, else a drag.
         container.on("mouseup", function(e) {
           mouseDown = false;
-        });
+        }); 
 
         //On mousemove event
         container.on('mousemove', function(e) {
@@ -83,7 +85,8 @@ chrome.runtime.sendMessage({cmd: "getStatus"}, function(response) {
               chrome.runtime.sendMessage({url: key}, function(response) {});
             }
           }
-        });
+        }); 
+      }
     });
   }
   else {
@@ -95,28 +98,28 @@ chrome.runtime.sendMessage({cmd: "getStatus"}, function(response) {
 });
 
 function get_elements(x1, y1, x2, y2) {
-    var element_list = [];
+  var element_list = [];
 
-    $('body a').each(function() {
-        if(!($(this).attr('class') == 'selectionBox')) {
-            var offset = $(this).offset();
+  $('body a').each(function() {
+    if(!($(this).attr('class') == 'selectionBox')) {
+      var offset = $(this).offset();
 
-            var element_x1 = offset.left;
-            var element_y1 = offset.top;
-            var element_x2 = offset.left + $(this).width();
-            var element_y2 = offset.top + $(this).height();
+      var element_x1 = offset.left;
+      var element_y1 = offset.top;
+      var element_x2 = offset.left + $(this).width();
+      var element_y2 = offset.top + $(this).height();
 
-            if(((x1 >= element_x1 && x1 <= element_x2 && y1 >= element_y1 && y1 <= element_y2) ||
-                (x2 >= element_x1 && x2 <= element_x2 && y1 >= element_y1 && y1 <= element_y2) ||
-                (x2 >= element_x1 && x2 <= element_x2 && y2 >= element_y1 && y2 <= element_y2) ||
-                (x1 >= element_x1 && x1 <= element_x2 && y2 >= element_y1 && y2 <= element_y2)) ||
-                ((element_x1 >= x1 && element_x1 <= x2) && (element_y1 >= y1 && element_y1 <= y2) ||
-                (element_x2 >= x1 && element_x2 <= x2) && (element_y1 >= y1 && element_y1 <= y2) ||
-                (element_x2 >= x1 && element_x2 <= x2) && (element_y2 >= y1 && element_y2 <= y2) ||
-                (element_x1 >= x1 && element_x1 <= x2) && (element_y2 >= y1 && element_y2 <= y2))) {
-                  element_list.push(this.href);
-            }
-        }
-    });
-    return element_list;
+      if(((x1 >= element_x1 && x1 <= element_x2 && y1 >= element_y1 && y1 <= element_y2) ||
+          (x2 >= element_x1 && x2 <= element_x2 && y1 >= element_y1 && y1 <= element_y2) ||
+          (x2 >= element_x1 && x2 <= element_x2 && y2 >= element_y1 && y2 <= element_y2) ||
+          (x1 >= element_x1 && x1 <= element_x2 && y2 >= element_y1 && y2 <= element_y2)) ||
+          ((element_x1 >= x1 && element_x1 <= x2) && (element_y1 >= y1 && element_y1 <= y2) ||
+          (element_x2 >= x1 && element_x2 <= x2) && (element_y1 >= y1 && element_y1 <= y2) ||
+          (element_x2 >= x1 && element_x2 <= x2) && (element_y2 >= y1 && element_y2 <= y2) ||
+          (element_x1 >= x1 && element_x1 <= x2) && (element_y2 >= y1 && element_y2 <= y2))) {
+            element_list.push(this.href);
+      }
+    }
+  });
+  return element_list;
 }
