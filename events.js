@@ -2,6 +2,16 @@
 var toggle = false;
 var on = false;
 
+chrome.runtime.onStartup.addListener(function() {
+	chrome.browserAction.setIcon({path: "icon19-off.png"}, function() {
+		on = false;
+		toggle = false;
+		executeContentScript();
+
+	});
+	chrome.browserAction.setTitle({title: "Blink is on."});	
+});
+
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	if(request.cmd == "getStatus") {
 		sendResponse(on);
